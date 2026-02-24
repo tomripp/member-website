@@ -103,45 +103,24 @@ export default function HomePage() {
       <section className="px-4 py-16 bg-slate-50">
         <div className="container mx-auto max-w-4xl">
           <h2 className="mb-8 text-2xl font-bold tracking-tight">
-            Latest Articles
+            {t("free_articles.title")}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            {[
-              {
-                title: "Introduction to Web Development",
-                desc: "A beginner-friendly guide covering HTML, CSS, and JavaScript fundamentals.",
-                tag: "Beginner",
-              },
-              {
-                title: "Modern CSS Techniques",
-                desc: "Explore Flexbox, Grid, and CSS custom properties for responsive layouts.",
-                tag: "Intermediate",
-              },
-              {
-                title: "JavaScript Best Practices",
-                desc: "Write cleaner, more maintainable JavaScript with these proven techniques.",
-                tag: "Intermediate",
-              },
-              {
-                title: "TypeScript for Beginners",
-                desc: "Add type safety to your JavaScript projects with TypeScript.",
-                tag: "Beginner",
-              },
-            ].map((article) => (
+            {(["article1", "article2", "article3", "article4"] as const).map((key) => (
               <Card
-                key={article.title}
+                key={key}
                 className="cursor-pointer transition-shadow hover:shadow-md"
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-base">{article.title}</CardTitle>
+                    <CardTitle className="text-base">{t(`free_articles.${key}.title`)}</CardTitle>
                     <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
-                      {article.tag}
+                      {t(`free_articles.${key}.tag`)}
                     </span>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription>{article.desc}</CardDescription>
+                  <CardDescription>{t(`free_articles.${key}.description`)}</CardDescription>
                 </CardContent>
               </Card>
             ))}

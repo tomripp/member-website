@@ -32,14 +32,47 @@
       "title": "Bereit loszulegen?",
       "subtitle": "Schließen Sie sich Tausenden von Mitgliedern an, die bereits Premium-Inhalte genießen.",
       "button": "Kostenlos registrieren"
+    },
+    "free_articles": {
+      "title": "Aktuelle Artikel",
+      "article1": {
+        "title": "Einführung in die Webentwicklung",
+        "description": "Ein einsteigerfreundlicher Leitfaden zu HTML, CSS und JavaScript-Grundlagen.",
+        "tag": "Einsteiger"
+      },
+      "article2": {
+        "title": "Moderne CSS-Techniken",
+        "description": "Flexbox, Grid und CSS-Variablen für responsive Layouts.",
+        "tag": "Fortgeschritten"
+      },
+      "article3": {
+        "title": "JavaScript Best Practices",
+        "description": "Schreiben Sie saubereren, wartbareren JavaScript-Code mit diesen bewährten Techniken.",
+        "tag": "Fortgeschritten"
+      },
+      "article4": {
+        "title": "TypeScript für Einsteiger",
+        "description": "Fügen Sie Ihren JavaScript-Projekten mit TypeScript Typsicherheit hinzu.",
+        "tag": "Einsteiger"
+      }
     }
   },
   "members": {
     "title": "Mitgliederbereich",
     "welcome": "Willkommen zurück, {name}!",
     "subtitle": "Exklusive Inhalte nur für registrierte Mitglieder.",
+    "badge": "Nur für Mitglieder",
+    "resources": {
+      "title": "Exklusive Ressourcen",
+      "coming_soon": "Demnächst verfügbar",
+      "videos": "Video-Tutorials",
+      "code": "Quellcode",
+      "forum": "Community-Forum",
+      "support": "Live-Support"
+    },
     "articles": {
       "title": "Premium-Artikel",
+      "badge": "Premium",
       "article1": {
         "title": "Erste-Schritte-Leitfaden",
         "description": "Ein umfassender Leitfaden, um das Beste aus Ihrer Mitgliedschaft herauszuholen."

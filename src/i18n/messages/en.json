@@ -32,14 +32,47 @@
       "title": "Ready to get started?",
       "subtitle": "Join thousands of members who already enjoy premium content.",
       "button": "Sign Up for Free"
+    },
+    "free_articles": {
+      "title": "Latest Articles",
+      "article1": {
+        "title": "Introduction to Web Development",
+        "description": "A beginner-friendly guide covering HTML, CSS, and JavaScript fundamentals.",
+        "tag": "Beginner"
+      },
+      "article2": {
+        "title": "Modern CSS Techniques",
+        "description": "Explore Flexbox, Grid, and CSS custom properties for responsive layouts.",
+        "tag": "Intermediate"
+      },
+      "article3": {
+        "title": "JavaScript Best Practices",
+        "description": "Write cleaner, more maintainable JavaScript with these proven techniques.",
+        "tag": "Intermediate"
+      },
+      "article4": {
+        "title": "TypeScript for Beginners",
+        "description": "Add type safety to your JavaScript projects with TypeScript.",
+        "tag": "Beginner"
+      }
     }
   },
   "members": {
     "title": "Members Area",
     "welcome": "Welcome back, {name}!",
     "subtitle": "Exclusive content for registered members only.",
+    "badge": "Members Only",
+    "resources": {
+      "title": "Exclusive Resources",
+      "coming_soon": "Coming soon",
+      "videos": "Video Tutorials",
+      "code": "Source Code",
+      "forum": "Community Forum",
+      "support": "Live Support"
+    },
     "articles": {
       "title": "Premium Articles",
+      "badge": "Premium",
       "article1": {
         "title": "Getting Started Guide",
         "description": "A comprehensive guide to making the most of your membership."
