@@ -36,8 +36,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
 
 # Install production deps (includes prisma CLI) with all transitive deps for migrations
+COPY --from=deps /app/package-lock.json ./
 COPY --from=builder /app/package.json ./
-RUN PRISMA_SKIP_POSTINSTALL_GENERATE=true npm install --omit=dev --no-audit --no-fund
+RUN PRISMA_SKIP_POSTINSTALL_GENERATE=true npm ci --omit=dev --no-audit --no-fund
 RUN chown -R nextjs:nodejs node_modules
 
 USER nextjs
