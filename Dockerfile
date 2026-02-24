@@ -31,14 +31,14 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Copy Prisma files needed for migrations and runtime
+# Copy Prisma schema and generated client
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/src/generated ./src/generated
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/valibot ./node_modules/valibot
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/pg ./node_modules/pg
-COPY --from=builder --chown=nextjs:nodejs /app/node_modules/pg-connection-string ./node_modules/pg-connection-string
+
+# Install production deps (includes prisma CLI) with all transitive deps for migrations
+COPY --from=builder /app/package.json ./
+RUN npm install --omit=dev --ignore-scripts --no-audit --no-fund
+RUN chown -R nextjs:nodejs node_modules
 
 USER nextjs
 
