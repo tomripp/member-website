@@ -1,6 +1,8 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 const FROM_EMAIL =
   process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
@@ -59,7 +61,7 @@ export async function sendVerificationEmail(
        <a href="${verifyUrl}" class="button">Verify Email</a>
        <p class="url-fallback">If the button doesn't work, copy this link into your browser:<br>${verifyUrl}</p>`;
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject,
@@ -91,7 +93,7 @@ export async function sendPasswordResetEmail(
        <p>If you didn't request this, you can safely ignore this email.</p>
        <p class="url-fallback">If the button doesn't work, copy this link into your browser:<br>${resetUrl}</p>`;
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_EMAIL,
     to: email,
     subject,
