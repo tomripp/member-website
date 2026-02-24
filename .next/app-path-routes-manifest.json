@@ -1,0 +1,20 @@
+{
+  "/[locale]/auth/forgot-password/page": "/[locale]/auth/forgot-password",
+  "/[locale]/auth/login/page": "/[locale]/auth/login",
+  "/[locale]/auth/register/page": "/[locale]/auth/register",
+  "/[locale]/auth/reset-password/page": "/[locale]/auth/reset-password",
+  "/[locale]/auth/verify-email/page": "/[locale]/auth/verify-email",
+  "/[locale]/members/page": "/[locale]/members",
+  "/[locale]/page": "/[locale]",
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/auth/forgot-password/route": "/api/auth/forgot-password",
+  "/api/auth/login/route": "/api/auth/login",
+  "/api/auth/logout/route": "/api/auth/logout",
+  "/api/auth/register/route": "/api/auth/register",
+  "/api/auth/reset-password/route": "/api/auth/reset-password",
+  "/api/auth/verify-email/route": "/api/auth/verify-email",
+  "/api/me/route": "/api/me",
+  "/favicon.ico/route": "/favicon.ico",
+  "/page": "/"
+}

@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --version)",
+      "Bash(npm --version)",
+      "Bash(npm install next-intl prisma @prisma/client bcryptjs jose resend zod react-hook-form @hookform/resolvers)",
+      "Bash(npm install -D @types/bcryptjs)",
+      "Bash(npx shadcn@latest init -d)",
+      "Bash(npx shadcn@latest add button card form input label separator sonner dialog sheet dropdown-menu badge skeleton --yes)",
+      "Bash(npx prisma init --datasource-provider postgresql)",
+      "Bash(npm install -D dotenv)",
+      "Bash(npx shadcn@latest add alert --yes)",
+      "Bash(npx prisma generate)",
+      "Bash(npm run build)",
+      "Bash(npm install @prisma/adapter-pg pg)",
+      "Bash(npm install -D @types/pg)",
+      "Bash(npx prisma migrate dev --name init)",
+      "Bash(node -e \"console.log\\(require\\(''./node_modules/next-intl/package.json''\\).version\\)\")",
+      "Bash(node -e \"const m = require\\(''./node_modules/next-intl/middleware''\\); console.log\\(Object.keys\\(m\\)\\)\")"
+    ]
+  }
+}
