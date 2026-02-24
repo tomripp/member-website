@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 import { createSession, sessionCookieOptions, COOKIE_NAME } from "@/lib/auth";
 
 const schema = z.object({

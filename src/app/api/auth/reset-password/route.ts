@@ -3,6 +3,8 @@ import bcryptjs from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 const schema = z.object({
   token: z.string().min(1),
   password: z.string().min(8),

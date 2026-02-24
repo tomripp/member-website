@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+
+export const dynamic = "force-dynamic";
 import { generateToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/email";
 
