@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     // Always return success to prevent email enumeration
     const user = await prisma.user.findUnique({ where: { email } });
 
-    if (user && user.emailVerified) {
+    if (user) {
       const resetToken = generateToken();
       const resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
