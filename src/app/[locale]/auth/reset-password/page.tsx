@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { useTranslations } from "next-intl";
 import {
   Card,
   CardContent,
@@ -9,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Link } from "@/i18n/navigation";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
 
 export async function generateMetadata(): Promise<Metadata> {
