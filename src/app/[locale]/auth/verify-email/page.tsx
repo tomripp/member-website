@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   Card,
@@ -15,11 +14,11 @@ import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 
 export default function VerifyEmailPage() {
   const t = useTranslations("auth.verify_email");
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
   useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get("token");
+
     if (!token) {
       setStatus("error");
       return;
@@ -30,7 +29,7 @@ export default function VerifyEmailPage() {
     })
       .then((res) => setStatus(res.ok ? "success" : "error"))
       .catch(() => setStatus("error"));
-  }, [token]);
+  }, []);
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
