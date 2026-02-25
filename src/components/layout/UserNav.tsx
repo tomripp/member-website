@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
@@ -13,16 +14,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User } from "lucide-react";
 
-interface UserNavProps {
-  user: { id: string; email: string; name: string | null } | null;
-}
+type UserData = { id: string; email: string; name: string | null } | null;
 
-export function UserNav({ user }: UserNavProps) {
+export function UserNav() {
   const t = useTranslations("nav");
   const router = useRouter();
+  const [user, setUser] = useState<UserData>(null);
+
+  useEffect(() => {
+    fetch("/api/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setUser(data?.user ?? null))
+      .catch(() => setUser(null));
+  }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    setUser(null);
     router.push("/");
     router.refresh();
   };

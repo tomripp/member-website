@@ -1,12 +1,10 @@
 import { useTranslations } from "next-intl";
-import { getCurrentUser } from "@/lib/auth";
 import { Link } from "@/i18n/navigation";
 import { UserNav } from "./UserNav";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
-export async function Header() {
+export function Header() {
   const t = useTranslations("nav");
-  const user = await getCurrentUser();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -27,20 +25,12 @@ export async function Header() {
           >
             {t("home")}
           </Link>
-          {user && (
-            <Link
-              href="/members"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {t("members")}
-            </Link>
-          )}
         </nav>
 
         {/* Right side */}
         <div className="flex items-center gap-3">
           <LanguageSwitcher />
-          <UserNav user={user} />
+          <UserNav />
         </div>
       </div>
     </header>
