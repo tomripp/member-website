@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { getTranslations, getLocale } from "next-intl/server";
-import { getCurrentUser } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import {
   Card,
   CardContent,
@@ -11,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Lock, Star, Sparkles } from "lucide-react";
+import { WelcomeBanner } from "@/components/members/WelcomeBanner";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("members");
@@ -18,13 +17,6 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function MembersPage() {
-  const user = await getCurrentUser();
-  const locale = await getLocale();
-
-  if (!user) {
-    redirect(`/${locale}/auth/login`);
-  }
-
   const t = await getTranslations("members");
 
   const articles = [
@@ -50,20 +42,8 @@ export default async function MembersPage() {
 
   return (
     <div className="flex flex-col">
-      {/* Welcome Banner */}
-      <section className="bg-gradient-to-r from-slate-900 to-slate-700 px-4 py-16 text-white">
-        <div className="container mx-auto max-w-4xl">
-          <div className="flex items-center gap-3 mb-2">
-            <Badge className="bg-white/20 text-white hover:bg-white/20 border-0">
-              {t("badge")}
-            </Badge>
-          </div>
-          <h1 className="text-3xl font-bold sm:text-4xl">
-            {t("welcome", { name: user.name ?? user.email })}
-          </h1>
-          <p className="mt-3 text-slate-300">{t("subtitle")}</p>
-        </div>
-      </section>
+      {/* Welcome Banner — client component, fetches user from /api/me */}
+      <WelcomeBanner />
 
       {/* Premium Content */}
       <section className="px-4 py-16 bg-background">

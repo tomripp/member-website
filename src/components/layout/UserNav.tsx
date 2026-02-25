@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
-import { Link } from "@/i18n/navigation";
+import { useRouter, usePathname, Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -19,6 +18,7 @@ type UserData = { id: string; email: string; name: string | null } | null;
 export function UserNav() {
   const t = useTranslations("nav");
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<UserData>(null);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function UserNav() {
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => setUser(data?.user ?? null))
       .catch(() => setUser(null));
-  }, []);
+  }, [pathname]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
