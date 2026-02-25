@@ -1,4 +1,8 @@
-import { getTranslations } from "next-intl/server";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   Card,
   CardContent,
@@ -9,34 +13,24 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 
-interface VerifyEmailPageProps {
-  searchParams: Promise<{ token?: string }>;
-}
+export default function VerifyEmailPage() {
+  const t = useTranslations("auth.verify_email");
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
 
-async function verifyToken(token: string): Promise<boolean> {
-  const port = process.env.PORT ?? "3000";
-  const res = await fetch(
-    `http://localhost:${port}/api/auth/verify-email?token=${encodeURIComponent(token)}`,
-    { cache: "no-store" }
-  );
-  return res.ok;
-}
-
-export default async function VerifyEmailPage({
-  searchParams,
-}: VerifyEmailPageProps) {
-  const t = await getTranslations("auth.verify_email");
-  const { token } = await searchParams;
-
-  let success: boolean | null = null;
-
-  if (token) {
-    try {
-      success = await verifyToken(token);
-    } catch {
-      success = false;
+  useEffect(() => {
+    if (!token) {
+      setStatus("error");
+      return;
     }
-  }
+
+    fetch(`/api/auth/verify-email?token=${encodeURIComponent(token)}`, {
+      cache: "no-store",
+    })
+      .then((res) => setStatus(res.ok ? "success" : "error"))
+      .catch(() => setStatus("error"));
+  }, [token]);
 
   return (
     <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
@@ -45,14 +39,14 @@ export default async function VerifyEmailPage({
           <CardTitle className="text-2xl">{t("title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 text-center">
-          {!token && (
+          {status === "loading" && (
             <div className="flex flex-col items-center gap-3">
               <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
               <p className="text-muted-foreground">{t("verifying")}</p>
             </div>
           )}
 
-          {success === true && (
+          {status === "success" && (
             <div className="flex flex-col items-center gap-3">
               <CheckCircle className="h-12 w-12 text-green-500" />
               <p className="font-medium text-green-700">{t("success")}</p>
@@ -65,7 +59,7 @@ export default async function VerifyEmailPage({
             </div>
           )}
 
-          {success === false && (
+          {status === "error" && (
             <div className="flex flex-col items-center gap-3">
               <XCircle className="h-12 w-12 text-destructive" />
               <Alert variant="destructive">
