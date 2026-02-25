@@ -8,25 +8,18 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
-import { prisma } from "@/lib/db";
 
 interface VerifyEmailPageProps {
   searchParams: Promise<{ token?: string }>;
 }
 
 async function verifyToken(token: string): Promise<boolean> {
-  const user = await prisma.user.findUnique({
-    where: { verificationToken: token },
-  });
-
-  if (!user) return false;
-
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { emailVerified: true, verificationToken: null },
-  });
-
-  return true;
+  const port = process.env.PORT ?? "3000";
+  const res = await fetch(
+    `http://localhost:${port}/api/auth/verify-email?token=${encodeURIComponent(token)}`,
+    { cache: "no-store" }
+  );
+  return res.ok;
 }
 
 export default async function VerifyEmailPage({
