@@ -8,23 +8,25 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link } from "@/i18n/navigation";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { prisma } from "@/lib/db";
 
 interface VerifyEmailPageProps {
   searchParams: Promise<{ token?: string }>;
 }
 
-async function verifyToken(token: string): Promise<{ success: boolean; message: string }> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
-    const res = await fetch(
-      `${baseUrl}/api/auth/verify-email?token=${encodeURIComponent(token)}`,
-      { cache: "no-store" }
-    );
-    const data = await res.json();
-    return { success: res.ok, message: data.message ?? data.error ?? "" };
-  } catch {
-    return { success: false, message: "" };
-  }
+async function verifyToken(token: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({
+    where: { verificationToken: token },
+  });
+
+  if (!user) return false;
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { emailVerified: true, verificationToken: null },
+  });
+
+  return true;
 }
 
 export default async function VerifyEmailPage({
@@ -33,10 +35,14 @@ export default async function VerifyEmailPage({
   const t = await getTranslations("auth.verify_email");
   const { token } = await searchParams;
 
-  let result: { success: boolean; message: string } | null = null;
+  let success: boolean | null = null;
 
   if (token) {
-    result = await verifyToken(token);
+    try {
+      success = await verifyToken(token);
+    } catch {
+      success = false;
+    }
   }
 
   return (
@@ -53,7 +59,7 @@ export default async function VerifyEmailPage({
             </div>
           )}
 
-          {result?.success && (
+          {success === true && (
             <div className="flex flex-col items-center gap-3">
               <CheckCircle className="h-12 w-12 text-green-500" />
               <p className="font-medium text-green-700">{t("success")}</p>
@@ -66,7 +72,7 @@ export default async function VerifyEmailPage({
             </div>
           )}
 
-          {result && !result.success && (
+          {success === false && (
             <div className="flex flex-col items-center gap-3">
               <XCircle className="h-12 w-12 text-destructive" />
               <Alert variant="destructive">
