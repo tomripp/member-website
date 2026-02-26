@@ -1,36 +1,223 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# member-website
+
+A full-stack membership website with authentication, bilingual content (EN/DE), and a protected members area — built with Next.js and deployed on Railway.
+
+**Production:** https://member-website-production.up.railway.app/
+
+> For a deep dive into the system design, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
+---
+
+## Features
+
+- **Registration & email verification** — new accounts require email confirmation before login
+- **Login / logout** — session-based auth via signed JWTs in httpOnly cookies
+- **Password reset** — secure token-based flow with 1-hour expiry
+- **Protected members area** — middleware enforces auth; unauthenticated requests redirect to login
+- **Bilingual (EN / DE)** — full i18n via next-intl; registration and password reset emails respect the user's locale
+- **Resend verification** — users can request a new verification email after registration
+
+---
+
+## Tech Stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, TypeScript) |
+| Styling | Tailwind CSS v4 + shadcn/ui v3 |
+| Auth | Custom JWT — bcryptjs + jose (no NextAuth) |
+| ORM | Prisma 5 |
+| Database | PostgreSQL (Railway) |
+| Email | Resend API |
+| i18n | next-intl (EN + DE) |
+| Deployment | Railway + Nixpacks |
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- A running PostgreSQL instance
+- A [Resend](https://resend.com) account and API key
+
+### 1. Clone and install
+
+```bash
+git clone https://github.com/tomripp/member-website.git
+cd member-website
+npm install
+```
+
+### 2. Configure environment
+
+Copy the example and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
+JWT_SECRET="your-secret-min-32-characters-long"
+RESEND_API_KEY="re_..."
+RESEND_FROM_EMAIL="noreply@yourdomain.com"
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+```
+
+### 3. Set up the database
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### 4. Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) — the app redirects to `/en/` by default.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+├── app/
+│   ├── [locale]/           # All user-facing pages (en + de)
+│   │   ├── page.tsx        # Homepage
+│   │   ├── members/        # Protected member area
+│   │   └── auth/           # Login, register, verify, forgot/reset password
+│   └── api/                # REST API routes (not locale-prefixed)
+│       ├── auth/           # register, login, logout, verify-email, forgot/reset-password
+│       └── me/             # GET current user
+├── components/
+│   ├── layout/             # Header, Footer, UserNav, LanguageSwitcher
+│   ├── auth/               # Form components (react-hook-form + zod)
+│   └── members/            # WelcomeBanner (client, fetches /api/me)
+├── lib/
+│   ├── auth.ts             # JWT helpers, createSession, getCurrentUser
+│   ├── db.ts               # Prisma singleton
+│   ├── email.ts            # Resend email helpers
+│   └── tokens.ts           # crypto token generator
+└── i18n/
+    ├── routing.ts          # Locales: ['en', 'de'], default: 'en'
+    └── messages/           # en.json + de.json
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Authentication
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Custom JWT auth — no NextAuth.
 
-## Deploy on Vercel
+- Passwords hashed with **bcryptjs** (12 rounds)
+- Sessions stored in the database; JWT carries `{ userId, sessionToken }`
+- Cookie: `HttpOnly; SameSite=Lax; Secure (prod); Max-Age=7d`
+- Middleware verifies JWT on every request to `/*/members` — no DB call needed at the edge
+- Full session validation (DB lookup + expiry) happens inside API routes via `getCurrentUser()`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## API Reference
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Create account, send verification email |
+| POST | `/api/auth/login` | Validate credentials, set session cookie |
+| POST | `/api/auth/logout` | Delete session, clear cookie |
+| GET | `/api/auth/verify-email?token=` | Verify email address |
+| POST | `/api/auth/forgot-password` | Send password reset email |
+| POST | `/api/auth/reset-password` | Set new password via token |
+| POST | `/api/auth/resend-verification` | Resend verification email |
+| GET | `/api/me` | Return current user (401 if not authenticated) |
+
+---
+
+## Testing
+
+### Unit tests
+
+```bash
+npm test                  # run all 53 unit tests
+npm run test:watch        # watch mode
+npm run test:coverage     # coverage report
+```
+
+Powered by **Vitest**. Tests cover all lib utilities and API route handlers with mocked Prisma and Resend.
+
+### E2E tests
+
+```bash
+npm run test:e2e          # headless Chromium (auto-starts dev server)
+npm run test:e2e:ui       # Playwright UI mode
+
+# Against the production deployment:
+BASE_URL=https://member-website-production.up.railway.app npm run test:e2e
+```
+
+Powered by **Playwright**. 22 specs covering navigation, i18n, full auth flows, and the members area. The global setup seeds a test user (`test@example.com` / `TestPassword123!`) before any spec runs.
+
+### Test plan
+
+```bash
+npm run test:plan         # generates tests/test-plan.xlsx
+```
+
+Generates an Excel workbook with 82 test cases across Unit (52), E2E (22), and Manual (8) sheets.
+
+---
+
+## Deployment
+
+The app deploys to **Railway** using Nixpacks (no Dockerfile required).
+
+On every deploy:
+1. Nixpacks runs `npm install` + `next build`
+2. Railway starts the app with `npx prisma migrate deploy && npx next start -p $PORT`
+
+Set the following environment variables in Railway:
+
+```
+DATABASE_URL        (auto-provided by Railway PostgreSQL service)
+JWT_SECRET
+RESEND_API_KEY
+RESEND_FROM_EMAIL
+NEXT_PUBLIC_BASE_URL
+```
+
+---
+
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed documentation covering:
+
+- Routing & i18n design
+- Full auth flow sequences (register → verify → login → logout → reset)
+- Middleware design (Edge-runtime JWT-only guard)
+- Database schema and Prisma singleton pattern
+- React 19 / Server Component constraints and how they're handled
+- Testing strategy and mocking patterns
+- Railway + Nixpacks deployment pipeline
+
+---
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Production build (prisma generate + next build) |
+| `npm run start` | Start production server |
+| `npm test` | Run unit tests (Vitest) |
+| `npm run test:watch` | Unit tests in watch mode |
+| `npm run test:coverage` | Unit test coverage report |
+| `npm run test:e2e` | Run E2E tests (Playwright) |
+| `npm run test:e2e:ui` | Playwright UI mode |
+| `npm run test:plan` | Generate tests/test-plan.xlsx |
+| `npx prisma studio` | Open Prisma DB browser |
+| `npx prisma db seed` | Seed test user |
