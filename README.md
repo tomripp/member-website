@@ -1,8 +1,22 @@
 # member-website
+An experiment to find out what AI code generation can accomplish.
 
+##Here my prompt:
+Help me to create a new website. It should have the following features: 
+- Homepage for free content 
+- Navigation to an area for member content, only accessible for registered users 
+- Login/logout functionality 
+- Register functionality, with email verification workflow 
+- Lost password reset functionality via reset link, sent to email 
+- multi-language DE / EN 
+- Clean, professional design 
+- Footer with Impressum link, when clicked showing some random name and address 
+Needed backend code to be hosted on railway.com
+
+##What it created:
 A full-stack membership website with authentication, bilingual content (EN/DE), and a protected members area — built with Next.js and deployed on Railway.
 
-**Production:** https://member-website-production.up.railway.app/
+**Check out the result:** https://member-website-production.up.railway.app/
 
 > For a deep dive into the system design, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
